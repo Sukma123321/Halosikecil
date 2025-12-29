@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunda Bahagia - Pantau Perkembangan Janin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment-locales@2.29.1/id.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+
+    <style>
+        :root {
+            --primary-color: #05B0C9;
+            --primary-dark: #048FA6;
+            --primary-light: #E6F7FA;
+            --text-color: #333333;
+            --light-text: #777777;
+            --white: #FFFFFF;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--white);
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            border-radius: 0 0 15px 15px;
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo img {
+            height: 80px;
+        }
+        
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .nav-links {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 14px;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .card-title {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input[type="date"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="date"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .result-section {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .pregnancy-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-card {
+            background-color: var(--primary-light);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .info-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .info-card p {
+            font-size: 14px;
+        }
+        
+        .countdown {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .fetus-development {
+            margin-top: 20px;
+        }
+        
+        .week-selector-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .week-selector {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 8px;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .week-selector::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .week-btn {
+            background-color: var(--white);
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        
+        .week-btn:hover, .week-btn.active {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+        
+        .development-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .fetus-image {
+            width: 100%;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        
+        .fetus-image img {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 5px;
+        }
+        
+        .fetus-details {
+            width: 100%;
+        }
+        
+        .fetus-details h3 {
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .fetus-details p {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .fetus-message {
+            background-color: var(--primary-light);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            position: relative;
+            font-size: 14px;
+        }
+        
+        .fetus-message:before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 10px solid var(--primary-light);
+        }
+        
+        .food-recommendation {
+            margin-top: 20px;
+        }
+        
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .food-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .food-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .food-img {
+            height: 100px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .food-img img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .food-info {
+            padding: 10px;
+        }
+        
+        .food-info h4 {
+            margin-bottom: 5px;
+            color: var(--primary-dark);
+            font-size: 13px;
+        }
+        
+        .food-info p {
+            font-size: 12px;
+            color: var(--light-text);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            color: var(--light-text);
+            font-size: 12px;
+        }
+        
+        /* Navigation arrows for week selector */
+        .week-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background-color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1;
+            opacity: 0.8;
+        }
+        
+        .week-nav:hover {
+            opacity: 1;
+        }
+        
+        .week-nav.left {
+            left: -15px;
+            display: none;
+        }
+        
+        .week-nav.right {
+            right: -15px;
+        }
+        
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            
+            .nav-links {
+                width: auto;
+                gap: 20px;
+            }
+            
+            .nav-links a {
+                font-size: 16px;
+            }
+            
+            button {
+                width: auto;
+            }
+            
+            .development-content {
+                flex-direction: row;
+            }
+            
+            .fetus-image {
+                min-width: 300px;
+            }
+            
+            .week-nav {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container main-content">
+        <div class="card">
+            <h2 class="card-title">Pantau Perkembangan Janin</h2>
+            <p style="font-size: 14px;">Masukkan Hari Pertama Haid Terakhir (HPHT) Anda untuk memulai pemantauan perkembangan janin dan mendapatkan informasi penting selama kehamilan.</p>
+            
+            <div class="input-group">
+                <label for="hpht">Hari Pertama Haid Terakhir (HPHT)</label>
+                <input type="date" id="hpht" name="hpht">
+            </div>
+            
+            <button id="calculate-btn">Mulai Pemantauan</button>
+            
+            <div class="loading" id="loading">
+                <div class="loading-spinner"></div>
+                <p>Sedang memproses data...</p>
+            </div>
+            
+            <div class="result-section" id="result-section">
+                <div class="pregnancy-info">
+                    <div class="info-card">
+                        <h3>Perkiraan Tanggal Kelahiran</h3>
+                        <p id="due-date">-</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Usia Kehamilan Saat Ini</h3>
+                        <p id="current-week">- minggu</p>
+                    </div>
+                    <div class="info-card">
+                        <h3>Trimester</h3>
+                        <p id="trimester">-</p>
+                    </div>
+                </div>
+                
+                <div class="countdown">
+                    <p>Menuju hari perkiraan lahir:</p>
+                    <p id="countdown-days">- hari lagi</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card fetus-development" id="development-section" style="display: none;">
+            <h2 class="card-title">Perkembangan Janin Mingguan</h2>
+            <p style="font-size: 14px;">Berikut perkembangan janin sesuai usia kehamilan Anda saat ini:</p>
+            
+            <div class="week-selector-container">
+                <div class="week-nav left">←</div>
+                <div class="week-selector" id="week-selector">
+                    <!-- Week buttons will be generated here -->
+                </div>
+                <div class="week-nav right">→</div>
+            </div>
+            
+            <div class="development-content">
+                <div class="fetus-image">
+                    <dotlottie-player id="fetus-img" 
+	    <dotlottie-player 
+            src="https://lottie.host/293e04e6-5efc-4305-898e-7d53b09c4719/AaNXZZKzpS.lottie" 
+            background="transparent" 
+            speed="1" 
+            style="width: 300px; height: 300px" 
+            loop 
+            autoplay>
+        </dotlottie-player>
+        
+    </div>
+    			<div class="fetus-message">
+                        <p id="baby-message">Masih menghubungi Janin Bunda 🥰 ...</p>
+                    </div>
+                <div class="fetus-details">
+                    <h3 id="week-title">Minggu 1: Persiapan Kehamilan</h3>
+                    <div id="week-description">
+                        <p>Informasi perkembangan janin akan dimuat...</p>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+        
+        <div class="card food-recommendation" id="food-section" style="display: none;">
+            <h2 class="card-title">Rekomendasi Makanan Sehat</h2>
+            <p style="font-size: 14px;">Berikut rekomendasi makanan lokal sehat untuk mencegah stunting sesuai usia kehamilan Bunda:</p>
+            
+            <div class="food-grid" id="food-grid">
+                <div class="food-card">
+                    <div class="food-img">
+                        <img src="https://via.placeholder.com/200x120/EEEEEE/999999?text=Loading" alt="Loading">
+                    </div>
+                    <div class="food-info">
+                        <h4>Memuat...</h4>
+                        <p>Sedang memuat rekomendasi makanan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 Eduting - Edukasi Stunting Berbasis AI</p>
+            <p>Dukung program pencegahan stunting di Indonesia</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Konfigurasi Gemini AI
+        const GEMINI_API_KEY = "AIzaSyBGXywnksPv6PgcQVPHJaMvhXJiMi5jqjo";
+        const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+        
+        // Elemen DOM
+        const hphtInput = document.getElementById('hpht');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const loadingElement = document.getElementById('loading');
+        const resultSection = document.getElementById('result-section');
+        const developmentSection = document.getElementById('development-section');
+        const foodSection = document.getElementById('food-section');
+        
+        const dueDateElement = document.getElementById('due-date');
+        const currentWeekElement = document.getElementById('current-week');
+        const trimesterElement = document.getElementById('trimester');
+        const countdownDaysElement = document.getElementById('countdown-days');
+        
+        const weekSelector = document.getElementById('week-selector');
+        const fetusImg = document.getElementById('fetus-img');
+        const weekTitle = document.getElementById('week-title');
+        const weekDescription = document.getElementById('week-description');
+        const babyMessage = document.getElementById('baby-message');
+        const foodGrid = document.getElementById('food-grid');
+        const leftNav = document.querySelector('.week-nav.left');
+        const rightNav = document.querySelector('.week-nav.right');
+        
+        // Variabel global untuk menyimpan data kehamilan
+        let currentPregnancyWeek = 1;
+        let dueDate = null;
+        let autoUpdateInterval = null;
+        
+        // Fungsi untuk menghitung tanggal perkiraan lahir (Hukum Naegele)
+        function calculateDueDate(hpht) {
+            const hphtDate = new Date(hpht);
+            const dueDate = new Date(hphtDate);
+            dueDate.setDate(hphtDate.getDate() + 7); // Tambah 7 hari
+            dueDate.setMonth(hphtDate.getMonth() + 9); // Tambah 9 bulan
+            return dueDate;
+        }
+        
+        // Fungsi untuk menghitung usia kehamilan dalam minggu
+        function calculatePregnancyWeek(hpht) {
+            const hphtDate = new Date(hpht);
+            const today = new Date();
+            const diffTime = today - hphtDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const weeks = Math.floor(diffDays / 7);
+            
+            // Pastikan minggu kehamilan antara 1-42
+            return Math.max(1, Math.min(weeks, 42));
+        }
+        
+        // Fungsi untuk menentukan trimester
+        function getTrimester(week) {
+            if (week < 13) return "Trimester Pertama";
+            if (week < 27) return "Trimester Kedua";
+            return "Trimester Ketiga";
+        }
+        
+        // Fungsi untuk menghitung countdown
+        function calculateCountdown(dueDate) {
+            const today = new Date();
+            const diffTime = dueDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays > 0 ? diffDays : 0;
+        }
+        
+        // Fungsi untuk memformat tanggal
+        function formatDate(date) {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return date.toLocaleDateString('id-ID', options);
+        }
+        
+        // Fungsi untuk menghasilkan tombol minggu
+        function generateWeekButtons(currentWeek) {
+            weekSelector.innerHTML = '';
+            const maxWeek = 42;
+            
+            // Tentukan range minggu yang akan ditampilkan (5 minggu sebelum dan sesudah minggu saat ini)
+            const startWeek = Math.max(1, currentWeek - 5);
+            const endWeek = Math.min(maxWeek, currentWeek + 5);
+            
+            for (let week = startWeek; week <= endWeek; week++) {
+                const button = document.createElement('button');
+                button.className = 'week-btn' + (week === currentWeek ? ' active' : '');
+                button.textContent = `Minggu ${week}`;
+                button.dataset.week = week;
+                
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.week-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    updateWeekInfo(parseInt(this.dataset.week));
+                });
+                
+                weekSelector.appendChild(button);
+            }
+            
+            // Scroll ke minggu saat ini
+            const activeBtn = document.querySelector(`.week-btn[data-week="${currentWeek}"]`);
+            if (activeBtn) {
+                activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+            
+            // Update tombol navigasi
+            updateNavButtons(currentWeek);
+        }
+        
+        // Fungsi untuk update tombol navigasi
+        function updateNavButtons(currentWeek) {
+            leftNav.style.display = currentWeek > 6 ? 'flex' : 'none';
+            rightNav.style.display = currentWeek < 37 ? 'flex' : 'none';
+        }
+        
+        // Fungsi untuk memanggil API Gemini AI
+        async function fetchAIResponse(prompt) {
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: prompt
+                            }]
+                        }]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    return data.candidates[0].content.parts[0].text;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error fetching from Gemini API:', error);
+                return null;
+            }
+        }
+        
+        // Fungsi untuk memperbarui info perkembangan mingguan dengan AI
+        async function updateWeekInfoWithAI(week) {
+            loadingElement.style.display = 'block';
+            currentPregnancyWeek = week;
+            
+            try {
+                // 1. Generate prompt untuk perkembangan janin
+                const developmentPrompt = `Berikan informasi detail tentang perkembangan janin pada minggu ${week} kehamilan dalam bahasa Indonesia. 
+                Sertakan:
+                - Ukuran dan berat janin
+                - Perkembangan organ utama
+                - Kemampuan baru yang dimiliki janin
+                - Perubahan fisik yang terjadi
+                - Gejala yang mungkin dialami ibu
+                - Tips perawatan untuk minggu ini agar tidak stunting
+                
+                Format dalam HTML dengan paragraf yang jelas dan mudah dipahami. Gunakan istilah medis yang akurat tetapi sederhana.`;
+                
+                // 2. Generate prompt untuk pesan bayi
+                const babyPrompt = `Buatkan pesan singkat, menyentuh, dan personal dari janin berusia ${week} minggu kepada ibunya dalam bahasa Indonesia dengan emoticon yang sesuai. 
+                Gunakan bahasa yang hangat dan penuh kasih sayang, sambil:
+                - Menyapa dengan panggilan "Bunda"
+                - Menceritakan perkembangan terbarunya
+                - Mengingatkan untuk menjaga kesehatan
+                - Memberikan motivasi
+                - Menyatakan rasa sayang`;
+                
+                // 3. Generate prompt untuk rekomendasi makanan
+                const foodPrompt = `Berikan 3 rekomendasi Tips Aktivitas Fisik Aman untuk ibu hamil pada minggu ${week} kehamilan untuk mencegah stunting.
+                Setiap rekomendasi harus:
+                - Mudah dilakukan
+                - Aman
+                - Disertai alasan manfaatnya
+                
+                Format dalam JSON array dengan properti: name, description, image (gunakan placeholder URL)`;
+                
+                // Jalankan semua request secara paralel
+                const [developmentResponse, babyResponse, foodResponse] = await Promise.all([
+                    fetchAIResponse(developmentPrompt),
+                    fetchAIResponse(babyPrompt),
+                    fetchAIResponse(foodPrompt)
+                ]);
+                
+                // Update UI dengan respons AI
+                weekTitle.textContent = `Minggu ${week}`;
+                weekDescription.innerHTML = developmentResponse || `<p>Informasi perkembangan janin minggu ${week} tidak tersedia. Silakan coba lagi nanti.</p>`;
+                babyMessage.textContent = babyResponse || "Hai Bunda! Aku sayang Bunda! Jaga kesehatan ya!";
+                
+                // Parse dan tampilkan rekomendasi makanan
+                try {
+                    const foods = foodResponse ? JSON.parse(foodResponse) : [
+                        { name: "Loading", description: "Data makanan tidak tersedia", image: "https://via.placeholder.com/200x120/EEEEEE/999999?text=Error" }
+                    ];
+                    
+                    foodGrid.innerHTML = '';
+                    foods.forEach(food => {
+                        const foodCard = document.createElement('div');
+                        foodCard.className = 'food-card';
+                        foodCard.innerHTML = `
+                            <div class="food-img">
+                                <img src="${food.image || 'https://via.placeholder.com/200x120/EEEEEE/999999?text=Food'}" alt="${food.name}">
+                            </div>
+                            <div class="food-info">
+                                <h4>${food.name}</h4>
+                                <p>${food.description}</p>
+                            </div>
+                        `;
+                        foodGrid.appendChild(foodCard);
+                    });
+                } catch (e) {
+                    console.error('Error parsing food recommendations:', e);
+                    foodGrid.innerHTML = '<p>Bunda Bisa lihat rekomendasi makanan di fitur aplikasi Eduting, Jaga Kesehatan bunda.</p>';
+                }
+                
+                // Update gambar janin berdasarkan minggu (placeholder)
+                fetusImg.src = `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_2gCCr-5DAg7kOAkFu1xWp8ChC2D7YcsewLkUg-DnVdePznRXsv5FlgJb65QdEyRZpM0&usqp=CAU&week=${week}`;
+                
+            } catch (error) {
+                console.error('Error updating week info:', error);
+                weekDescription.innerHTML = `<p>Maaf, terjadi kesalahan saat memuat informasi perkembangan janin minggu ${week}.</p>`;
+                babyMessage.textContent = "Hai Bunda! Maaf, aku tidak bisa mengirim pesan saat ini. Tetap jaga kesehatan ya!";
+            } finally {
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        // Fungsi untuk memperbarui info perkembangan mingguan
+        function updateWeekInfo(week) {
+            currentPregnancyWeek = week;
+            updateWeekInfoWithAI(week);
+            generateWeekButtons(week);
+        }
+        
+        // Fungsi untuk memeriksa dan memperbarui usia kehamilan secara otomatis
+        function checkAndUpdatePregnancyWeek() {
+            if (!hphtInput.value) return;
+            
+            const newWeek = calculatePregnancyWeek(hphtInput.value);
+            
+            if (newWeek !== currentPregnancyWeek) {
+                currentPregnancyWeek = newWeek;
+                currentWeekElement.textContent = `${currentPregnancyWeek} minggu`;
+                trimesterElement.textContent = getTrimester(currentPregnancyWeek);
+                
+                // Update informasi minggu ini
+                updateWeekInfo(currentPregnancyWeek);
+                
+                // Update countdown
+                if (dueDate) {
+                    const countdownDays = calculateCountdown(dueDate);
+                    countdownDaysElement.textContent = `${countdownDays} hari lagi`;
+                }
+            }
+        }
+        
+        // Event listener untuk tombol navigasi minggu
+        leftNav.addEventListener('click', function() {
+            if (currentPregnancyWeek > 1) {
+                updateWeekInfo(currentPregnancyWeek - 1);
+            }
+        });
+        
+        rightNav.addEventListener('click', function() {
+            if (currentPregnancyWeek < 42) {
+                updateWeekInfo(currentPregnancyWeek + 1);
+            }
+        });
+        
+        // Event listener untuk tombol hitung
+        calculateBtn.addEventListener('click', function() {
+            const hpht = hphtInput.value;
+            
+            if (!hpht) {
+                alert('Silakan masukkan Hari Pertama Haid Terakhir (HPHT)');
+                return;
+            }
+            
+            // Hitung tanggal perkiraan lahir
+            dueDate = calculateDueDate(hpht);
+            currentPregnancyWeek = calculatePregnancyWeek(hpht);
+            const trimester = getTrimester(currentPregnancyWeek);
+            const countdownDays = calculateCountdown(dueDate);
+            
+            // Update UI
+            dueDateElement.textContent = formatDate(dueDate);
+            currentWeekElement.textContent = `${currentPregnancyWeek} minggu`;
+            trimesterElement.textContent = trimester;
+            countdownDaysElement.textContent = `${countdownDays} hari lagi`;
+            
+            // Tampilkan hasil
+            resultSection.style.display = 'block';
+            
+            // Tampilkan section perkembangan janin dan makanan
+            developmentSection.style.display = 'block';
+            foodSection.style.display = 'block';
+            
+            // Tampilkan info untuk minggu saat ini
+            updateWeekInfo(currentPregnancyWeek);
+            
+            // Mulai pemantauan otomatis (jika belum berjalan)
+            if (!autoUpdateInterval) {
+                autoUpdateInterval = setInterval(checkAndUpdatePregnancyWeek, 24 * 60 * 60 * 1000); // Periksa setiap hari
+            }
+        });
+        
+        // Inisialisasi tanggal HPHT default (7 hari yang lalu)
+        const defaultHpht = new Date();
+        defaultHpht.setDate(defaultHpht.getDate() - 7);
+        hphtInput.valueAsDate = defaultHpht;
+        
+        // Untuk pengembangan: tambahkan event listener untuk perubahan HPHT
+        hphtInput.addEventListener('change', function() {
+            if (autoUpdateInterval) {
+                clearInterval(autoUpdateInterval);
+                autoUpdateInterval = null;
+            }
+        });
+    </script>
+</body>
+</html>
